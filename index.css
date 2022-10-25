@@ -182,3 +182,36 @@ img.fullscreen-qr-link {
 div.flex-br {
 	width: 100%;
 }
+
+div.data-input {
+	background-color: var(--d2);
+	box-shadow: 0 0 5px var(--d2);
+
+	border-radius: 10px;
+	
+	width: 300px;
+
+	text-justify:auto;
+
+	padding: 10px;
+	margin: 20px;
+}
+
+div.data-input input {
+	background: none;
+
+	border: none;
+	border-bottom: solid 3px var(--d3);
+	border-radius: 10px;
+
+	color: var(--w3);
+
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+div.theme-4 {
+	display: flex; 
+	justify-content: center; 
+	align-items: center;
+}
