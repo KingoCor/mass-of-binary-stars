@@ -215,3 +215,23 @@ div.theme-4 {
 	justify-content: center; 
 	align-items: center;
 }
+
+#play-button {
+	color: var(--w3);
+	border: none;
+	background-color: var(--d3);
+	padding: 10px;
+	font-size: 12pt;
+	border-radius: 10px;
+	transition: all 100ms;
+}
+
+#play-button:hover {
+	text-shadow: 0 0 30px var(--w0);
+	transform: translate(0,-2px);
+	transition: all 100ms;
+}
+
+hr {
+	border: dashed 2px var(--d3);
+}

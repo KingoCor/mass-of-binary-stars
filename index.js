@@ -14,11 +14,13 @@ const ctx = canvas.getContext('2d');
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 
+let animation_deg = 0;
+
 //inputs
 let m1_el = document.getElementById("m1")
 let m2_el = document.getElementById("m2")
 let A_el = document.getElementById("A")
-let T_el = document.getElementById("T")
+let culc_data = document.getElementById("culc-data")
 
 const draw_circle = (x,y,r,color)=> {
 	ctx.beginPath();
@@ -47,10 +49,8 @@ let A1=(m2*A)/(m1+m2)
 let A2=A-A1
 
 let T = Math.sqrt(Math.pow(A,3)/(m1+m2))
-console.log(T,T*100,Math.round(T*100),Math.round(T*100)/100)
-T_el.value=Math.round(T*100)/100
 
-const visualise = (m1,m2,A,A1,A2) => {
+const visualise = (m1,m2,A,A1,A2,deg=0) => {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	//Scaling
@@ -66,33 +66,45 @@ const visualise = (m1,m2,A,A1,A2) => {
 	draw_orbit(centerX,centerY,A1_on_screen,2,"white")
 	draw_orbit(centerX,centerY,A2_on_screen,2,"white")
 
+	//Culc x and y 
+	rad = deg*Math.PI/180
+	let x1 = centerX + A1_on_screen * Math.cos(rad)
+	let y1 = centerY + A1_on_screen * Math.sin(rad)
+	let x2 = centerX - A2_on_screen * Math.cos(rad)
+	let y2 = centerY - A2_on_screen * Math.sin(rad)
+
 	//A
 	ctx.beginPath();
 	ctx.setLineDash([5, 5]);
-	ctx.moveTo(centerX-A1_on_screen, centerY); 
-	ctx.lineTo(centerX+A2_on_screen, centerY);
+	ctx.moveTo(x1, y1); 
+	ctx.lineTo(x2, y2);
 	ctx.strokeStyle = "white";
 	ctx.lineWidth = 2;
 	ctx.stroke();
 
 	//Stars
-	draw_circle(centerX-A1_on_screen,centerY,m1_on_screen,"#ffff00")
-	draw_circle(centerX+A2_on_screen,centerY,m2_on_screen,"#ffff00")
+	draw_circle(x1,y1,m1_on_screen,"#ffff00")
+	draw_circle(x2,y2,m2_on_screen,"#ffff00")
 
 	//mass center 
 	draw_circle(centerX,centerY,A_on_screen/50,"white")
 }
-visualise(m1,m2,A,A1,A2)
 
 const reculc_A12_T = () => {
 	A1=(m2*A)/(m1+m2)
 	A2=A-A1
 
 	T = Math.sqrt(Math.pow(A,3)/(m1+m2))
-	T_el.value=Math.round(T*100)/100
+	
+	culc_data.innerHTML=`<p>T = ${Math.round(T*100)/100} лет</p>`
+	culc_data.innerHTML+=`<p>A<sub>1</sub> = ${Math.round(A1*100)/100} а.е.</p>`
+	culc_data.innerHTML+=`<p>A<sub>2</sub> = ${Math.round(A2*100)/100} а.е.</p>`
+
+	animation_deg = 0
 
 	visualise(m1,m2,A,A1,A2)
 }
+reculc_A12_T()
 
 m1_el.addEventListener("change", (e)=>{
 	m1 = Number(e.target.value)
@@ -108,4 +120,31 @@ A_el.addEventListener("change", (e)=>{
 	A = Number(e.target.value)
 	reculc_A12_T()
 })
+
+let play_button = document.getElementById("play-button")
+let is_animation_playing = false;
+let interval
+
+play_button.addEventListener("click", (e)=>{
+	console.log(e.target)
+	if (is_animation_playing) {
+		play_button.children[0].className = "fa-solid fa-play"	
+		clearInterval(interval)
+		animation_deg = 0;
+		visualise(m1,m2,A,A1,A2,animation_deg);
+	} else {
+		play_button.children[0].className = "fa-solid fa-pause"
+
+		interval = setInterval(()=>{
+			visualise(m1,m2,A,A1,A2,animation_deg);
+			animation_deg+=1;
+			if (animation_deg>=360) {
+				animation_deg = 0;
+			}
+		},50)
+	}
+
+	is_animation_playing=!is_animation_playing
+})
+
 
